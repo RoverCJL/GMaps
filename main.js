@@ -11,8 +11,8 @@ function initMap() {
     const markers = [
         {
             locationName:"Junction 8",
-            lat: 1.3506808,
-            lng: 103.8461828,
+            lat: 1.3503771216289602, 
+            lng: 103.84908849332001,
             address:"9 Bishan Pl, Singapore 579837",
             link:"https://www.google.com.sg"
         },{
@@ -24,6 +24,16 @@ function initMap() {
         }
     ];
 
+    const junc8Coordinates = [
+        { lat: 1.351623750973524, lng: 103.84750888896363 },
+        { lat: 1.351850594046744, lng: 103.85194112397122 },
+        { lat: 1.3478127841778096,lng: 103.85133604069372 },
+        { lat: 1.348493314400655, lng: 103.84608694326155 },
+        { lat: 1.351623750973524, lng: 103.84750888896363 },
+      ];
+
+    
+
     const centerMap = {lat:1.3559772, lng: 103.8125937}
 
     const mapOptions = {
@@ -34,6 +44,7 @@ function initMap() {
             latLngBounds: SG_BOUNDS,
             strictBounds:false
         },
+        clickableIcons: false,
         styles: [
             {
                 "featureType": "water",
@@ -213,6 +224,16 @@ function initMap() {
 
 
     const map = new google.maps.Map(document.getElementById('gmap'), mapOptions);
+
+    const junc8Line = new google.maps.Polyline({
+        path: junc8Coordinates,
+        geodesic: true,
+        strokeColor: "#FF0000",
+        strokeOpacity: 1.0,
+        strokeWeight: 2,
+    });
+
+    junc8Line.setMap(map);
 
     const infoWindow = new google.maps.InfoWindow({
         minWidth:250,
