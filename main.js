@@ -40,6 +40,7 @@ function initMap() {
         center: centerMap,
         zoom: 10,
         disableDefaultUI: true,
+        mapTypeId: "satellite",
         restriction: {
             latLngBounds: SG_BOUNDS,
             strictBounds:false
@@ -225,6 +226,10 @@ function initMap() {
 
     const map = new google.maps.Map(document.getElementById('gmap'), mapOptions);
 
+    map.setTilt(45);
+
+    
+
     const junc8Line = new google.maps.Polyline({
         path: junc8Coordinates,
         geodesic: true,
@@ -241,6 +246,8 @@ function initMap() {
     })
 
     const bounds = new google.maps.LatLngBounds();
+
+    var centerOfMarkers;
 
     for (let i = 0; i < markers.length; i++) {
         const marker = new google.maps.Marker({
@@ -260,24 +267,57 @@ function initMap() {
             `;
 
             google.maps.event.addListener(marker, 'click', function() {
+
                 infoWindow.setContent(infoWindowContent);
                 infoWindow.open(map, marker);
+
+                map.setTilt(45);
+
+                map.panTo(marker.getPosition());
+                smoothZoom(map, 19, map.getZoom());
             });
+            
 
         }
         createInfoWindows();
 
         infoWindow.addListener('closeclick', function() {
-            map.fitBounds(bounds);
+            // map.fitBounds(bounds);
+            map.setTilt(0);
+
         });
 
 
         bounds.extend(new google.maps.LatLng(markers[i]['lat'], markers[i]['lng']));
         map.fitBounds(bounds);
+        centerOfMarkers=bounds;
     } 
 
+    const resetButton = document.querySelector(".btn");
+
+    // Add click event listener to the button
+    resetButton.addEventListener("click", function() {
+        // map.setCenter(centerMap);
+        infoWindow.close();
+        map.fitBounds(centerOfMarkers);
+        map.setZoom(12.6);
+        
+    });
+
 }
 
-function goLink(link) {
-    window.open(link, "_blank");
-}
+// Smooth zoom function
+function smoothZoom (map, max, cnt) {
+    if (cnt >= max) {
+        return;
+    }
+    else {
+        z = google.maps.event.addListener(map, 'zoom_changed', function(event){
+            google.maps.event.removeListener(z);
+            smoothZoom(map, max, cnt + 1);
+        });
+        setTimeout(function(){map.setZoom(cnt)}, 75); 
+    }
+}  
+
+
